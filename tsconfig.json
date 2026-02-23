@@ -1,0 +1,26 @@
+{
+    "include": ["src"],
+    "compilerOptions": {
+        "noEmit": true,
+        "target": "es2022",
+        "module": "nodenext",
+        "declaration": true,
+        "esModuleInterop": false,
+        "forceConsistentCasingInFileNames": true,
+        "allowImportingTsExtensions": true,
+        "rewriteRelativeImportExtensions": true,
+        "strict": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "isolatedDeclarations": true,
+        "skipLibCheck": true
+    }
+}

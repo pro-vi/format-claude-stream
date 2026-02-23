@@ -1,0 +1,18 @@
+{
+  "name": "format-claude-stream",
+  "version": "0.0.0",
+  "description": "Formats output from `claude --output-format stream-json` as human-readable text",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "verify": "tsc && jest",
+    "test": "jest"
+  },
+  "packageManager": "pnpm@10.26.0",
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@swc/jest": "^0.2.39",
+    "jest": "^30.2.0",
+    "typescript": "^5.9.3"
+  }
+}
