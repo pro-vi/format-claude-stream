@@ -1,10 +1,10 @@
-import { Output } from "./output.type.ts";
+import {Output} from "./output.type.ts";
 
 export class OutputFake implements Output {
-    private written = ""
+    private written = "";
 
     async write(data: string): Promise<void> {
-        this.written += data
+        this.written += data;
     }
 
     value() {

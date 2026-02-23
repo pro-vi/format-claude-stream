@@ -1,3 +1,3 @@
 #!/usr/bin/env -S node --import @swc-node/register/esm-register
 
-console.log("Hello, world!")
+console.log("Hello, world!");
