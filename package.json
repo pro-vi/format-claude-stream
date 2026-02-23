@@ -11,8 +11,13 @@
   "packageManager": "pnpm@10.26.0",
   "devDependencies": {
     "@jest/globals": "^30.2.0",
+    "@swc-node/register": "^1.11.1",
     "@swc/jest": "^0.2.39",
+    "dedent": "^1.7.1",
     "jest": "^30.2.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
   }
 }
