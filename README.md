@@ -5,5 +5,5 @@ A CLI filter to turn Claude's streaming JSON output into human-readable text.
 ## Usage
 
 ```
-claude --print --output-format stream-json | format-claude-stream
+claude --print --output-format stream-json | cli/main.ts
 ```
