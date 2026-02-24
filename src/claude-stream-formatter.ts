@@ -34,6 +34,12 @@ export class ClaudeStreamFormatter {
             case "result":
                 await this.writeResultLine(parsed.data);
                 break;
+            case "stream_event":
+                // These events provide incrementally streamed data, which is
+                // also rolled up into other event types. We don't care about
+                // streaming tokens to output as fast as they come in, so we
+                // ignore these events.
+                break;
             default:
                 await this.writeLine(JSON.stringify(parsed.data));
                 break;
