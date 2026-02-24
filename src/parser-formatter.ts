@@ -18,11 +18,11 @@ import {
 export class ParserFormatter {
     constructor(private output: Output) {}
 
-    async write(json: string): Promise<void> {
-        const parsed = StreamLine.safeParse(JSON.parse(json));
+    async write(data: unknown): Promise<void> {
+        const parsed = StreamLine.safeParse(data);
 
         if (!parsed.success) {
-            await this.writeLine(`Unrecognized JSON: ${json.trimEnd()}`);
+            await this.writeLine(`Unrecognized JSON: ${JSON.stringify(data)}`);
             return;
         }
 
@@ -55,7 +55,7 @@ export class ParserFormatter {
             return;
         }
 
-        const toolCall = parsedToolCall.data
+        const toolCall = parsedToolCall.data;
 
         switch (toolCall.name) {
             case "Bash":
@@ -103,7 +103,7 @@ export class ParserFormatter {
     }
 
     private async writeUnrecognizedToolCall(raw: unknown) {
-        const toolCall = UnrecognizedToolCall.parse(raw)
+        const toolCall = UnrecognizedToolCall.parse(raw);
 
         await this.writeLine(
             `Unrecognized tool call: ${toolCall.name} ${JSON.stringify(toolCall.input)}`,

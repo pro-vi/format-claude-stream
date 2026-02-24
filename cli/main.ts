@@ -17,7 +17,7 @@ let promiseChain = Promise.resolve()
 rl.on('line', (line) => {
     promiseChain = promiseChain.then(async () => {
         try {
-            await pf.write(line);
+            await pf.write(JSON.parse(line));
         } catch (e) {
             console.error(e)
             console.error("The bad line of input was:")

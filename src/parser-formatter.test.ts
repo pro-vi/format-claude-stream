@@ -14,7 +14,7 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(`{}\n`);
+        await pf.write({});
 
         expect(outputFake.value()).toBe("Unrecognized JSON: {}\n");
     });
@@ -23,34 +23,34 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(`{"type":"bork-bork-bork"}\n`);
+        await pf.write({type: "bork-bork-bork"});
 
-        expect(outputFake.value()).toBe(`Unrecognized JSON: {"type":"bork-bork-bork"}\n`);
+        expect(outputFake.value()).toBe(
+            `Unrecognized JSON: {"type":"bork-bork-bork"}\n`,
+        );
     });
 
     it("formats a Bash tool call", async () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "tool_use",
-                            name: "Bash",
-                            input: {
-                                command: "pnpm test 2>&1 | tail -100",
-                                description: "Run all tests",
-                                timeout: 300000,
-                            },
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "tool_use",
+                        name: "Bash",
+                        input: {
+                            command: "pnpm test 2>&1 | tail -100",
+                            description: "Run all tests",
+                            timeout: 300000,
                         },
-                    ],
-                },
-            }),
-        );
+                    },
+                ],
+            },
+        });
 
         expect(outputFake.value()).toBe(dedent`
             Run all tests:
@@ -62,23 +62,21 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "tool_use",
-                            name: "Read",
-                            input: {
-                                file_path: "/foo/bar",
-                            },
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "tool_use",
+                        name: "Read",
+                        input: {
+                            file_path: "/foo/bar",
                         },
-                    ],
-                },
-            }),
-        );
+                    },
+                ],
+            },
+        });
 
         expect(outputFake.value()).toBe(dedent`
             Read: /foo/bar\n
@@ -89,23 +87,21 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "tool_use",
-                            name: "Edit",
-                            input: {
-                                file_path: "/foo/bar",
-                            },
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "tool_use",
+                        name: "Edit",
+                        input: {
+                            file_path: "/foo/bar",
                         },
-                    ],
-                },
-            }),
-        );
+                    },
+                ],
+            },
+        });
 
         expect(outputFake.value()).toBe(dedent`
             Edit: /foo/bar\n
@@ -116,20 +112,18 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "thinking",
-                            thinking: "Mmm... donuts",
-                        },
-                    ],
-                },
-            }),
-        );
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "thinking",
+                        thinking: "Mmm... donuts",
+                    },
+                ],
+            },
+        });
 
         expect(outputFake.value()).toBe("Thinking: Mmm... donuts\n");
     });
@@ -138,25 +132,23 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "tool_use",
-                            name: "Grep",
-                            input: {
-                                pattern: "a regex",
-                                path: "/my/project",
-                                output_mode: "content",
-                            },
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "tool_use",
+                        name: "Grep",
+                        input: {
+                            pattern: "a regex",
+                            path: "/my/project",
+                            output_mode: "content",
                         },
-                    ],
-                },
-            }),
-        );
+                    },
+                ],
+            },
+        });
 
         expect(outputFake.value()).toBe("Grep: /a regex/ in /my/project\n");
     });
@@ -165,25 +157,23 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "tool_use",
-                            name: "Grep",
-                            input: {
-                                pattern: "/",
-                                path: "/my/project",
-                                output_mode: "content",
-                            },
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "tool_use",
+                        name: "Grep",
+                        input: {
+                            pattern: "/",
+                            path: "/my/project",
+                            output_mode: "content",
                         },
-                    ],
-                },
-            }),
-        );
+                    },
+                ],
+            },
+        });
 
         expect(outputFake.value()).toBe("Grep: /\\// in /my/project\n");
     });
@@ -192,24 +182,24 @@ describe("an output stream parser/formatter", () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
-        await pf.write(
-            JSON.stringify({
-                type: "assistant",
-                message: {
-                    type: "message",
-                    content: [
-                        {
-                            type: "tool_use",
-                            name: "UncannyValley",
-                            input: {
-                                foo: "bar",
-                            },
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "tool_use",
+                        name: "UncannyValley",
+                        input: {
+                            foo: "bar",
                         },
-                    ],
-                },
-            }),
-        );
+                    },
+                ],
+            },
+        });
 
-        expect(outputFake.value()).toBe(`Unrecognized tool call: UncannyValley {"foo":"bar"}\n`)
-    })
+        expect(outputFake.value()).toBe(
+            `Unrecognized tool call: UncannyValley {"foo":"bar"}\n`,
+        );
+    });
 });
