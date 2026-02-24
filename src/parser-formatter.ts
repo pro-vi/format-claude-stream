@@ -18,11 +18,11 @@ import {
 export class ParserFormatter {
     constructor(private output: Output) {}
 
-    async write(data: string): Promise<void> {
-        const parsed = StreamLine.safeParse(JSON.parse(data));
+    async write(json: string): Promise<void> {
+        const parsed = StreamLine.safeParse(JSON.parse(json));
 
         if (!parsed.success) {
-            await this.writeLine(`Unrecognized JSON: ${data.trimEnd()}`);
+            await this.writeLine(`Unrecognized JSON: ${json.trimEnd()}`);
             return;
         }
 
