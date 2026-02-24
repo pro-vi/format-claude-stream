@@ -20,4 +20,31 @@ describe("the StreamLine schema", () => {
             expect.objectContaining({success: true}),
         );
     });
+
+    it("accepts a tool result message", () => {
+        const toolResult = {
+            type: "user",
+            message: {
+                role: "user",
+                content: [
+                    {
+                        type: "tool_result",
+                        content: "Done!",
+                        is_error: false,
+                    },
+                ],
+            },
+            tool_use_result: {
+                stdout: "this is the standard output",
+                stderr: "",
+                interrupted: false,
+                isImage: false,
+                noOutputExpected: false,
+            },
+        };
+
+        expect(StreamLine.safeParse(toolResult)).toEqual(
+            expect.objectContaining({success: true}),
+        );
+    });
 });

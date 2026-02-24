@@ -1,7 +1,11 @@
 import * as z from "zod";
 import {StreamLine} from "./formats/stream-line.ts";
 import {Output} from "./output.type.ts";
-import type {AssistantLine, ResultLine} from "./formats/stream-line.ts";
+import type {
+    AssistantLine,
+    ResultLine,
+    UserLine,
+} from "./formats/stream-line.ts";
 import {
     TextMessageContent,
     ThinkingMessageContent,
@@ -15,6 +19,7 @@ import {
     ToolCall,
     UnrecognizedToolCall,
 } from "./formats/tool-calls.ts";
+import {UserMessageContent} from "./formats/user-message.ts";
 
 export class ClaudeStreamFormatter {
     constructor(private output: Output) {}
@@ -40,6 +45,9 @@ export class ClaudeStreamFormatter {
                 // streaming tokens to output as fast as they come in, so we
                 // ignore these events.
                 break;
+            case "user":
+                await this.writeUserLine(parsed.data);
+                break;
             default:
                 await this.writeLine(JSON.stringify(parsed.data));
                 break;
@@ -64,6 +72,16 @@ export class ClaudeStreamFormatter {
 
     private async writeResultLine(data: z.infer<typeof ResultLine>) {
         this.writeLine(data.result);
+    }
+
+    private async writeUserLine(data: z.infer<typeof UserLine>) {
+        for (const content of data.message.content) {
+            switch (content.type) {
+                case "tool_result":
+                    await this.writeToolResultMessageContent(content);
+                    break;
+            }
+        }
     }
 
     private async writeToolUseMessageContent(
@@ -106,6 +124,12 @@ export class ClaudeStreamFormatter {
         data: z.infer<typeof TextMessageContent>,
     ) {
         await this.writeLine(data.text);
+    }
+
+    private async writeToolResultMessageContent(
+        data: z.infer<typeof UserMessageContent>,
+    ) {
+        await this.writeLine(data.content);
     }
 
     private async writeBashToolCall(toolCall: z.infer<typeof BashToolCall>) {

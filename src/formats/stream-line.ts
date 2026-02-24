@@ -1,5 +1,6 @@
 import * as z from "zod";
 import {AssistantMessageContent} from "./assistant-message-content.ts";
+import {UserMessage} from "./user-message.ts";
 
 export const AssistantLine = z.looseObject({
     type: z.literal("assistant"),
@@ -18,8 +19,9 @@ const StreamEventLine = z.looseObject({
     type: z.literal("stream_event"),
 });
 
-const UserLine = z.looseObject({
+export const UserLine = z.looseObject({
     type: z.literal("user"),
+    message: UserMessage,
 });
 
 export const StreamLine = z.discriminatedUnion("type", [
