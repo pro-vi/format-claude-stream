@@ -1,16 +1,16 @@
 import * as z from "zod";
 
-export const ThinkingMessageContent = z.object({
+export const ThinkingMessageContent = z.looseObject({
     type: z.literal("thinking"),
     thinking: z.string(),
 });
 
-export const TextMessageContent = z.object({
+export const TextMessageContent = z.looseObject({
     type: z.literal("text"),
     text: z.string(),
 });
 
-export const ToolUseMessageContent = z.object({
+export const ToolUseMessageContent = z.looseObject({
     type: z.literal("tool_use"),
     name: z.string(),
     input: z.any(),
