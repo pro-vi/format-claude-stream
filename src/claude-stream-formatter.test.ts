@@ -256,4 +256,24 @@ describe("ClaudeStreamFormatter", () => {
 
         expect(outputFake.value()).toBe("Done!\n");
     });
+
+    it("writes a text message intended for the user", async () => {
+        const outputFake = new OutputFake();
+        const pf = new ClaudeStreamFormatter(outputFake);
+
+        await pf.write({
+            type: "assistant",
+            message: {
+                type: "message",
+                content: [
+                    {
+                        type: "text",
+                        text: "Hello!",
+                    },
+                ],
+            },
+        });
+
+        expect(outputFake.value()).toBe("Hello!\n");
+    });
 });

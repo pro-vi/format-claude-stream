@@ -3,6 +3,7 @@ import {StreamLine} from "./formats/stream-line.ts";
 import {Output} from "./output.type.ts";
 import type {AssistantLine, ResultLine} from "./formats/stream-line.ts";
 import {
+    TextMessageContent,
     ThinkingMessageContent,
     ToolUseMessageContent,
 } from "./formats/assistant-message-content.ts";
@@ -48,6 +49,9 @@ export class ClaudeStreamFormatter {
                 case "thinking":
                     await this.writeThinkingMessageContent(content);
                     return;
+                case "text":
+                    await this.writeTextMessageContent(content);
+                    return;
             }
         }
     }
@@ -90,6 +94,12 @@ export class ClaudeStreamFormatter {
         data: z.infer<typeof ThinkingMessageContent>,
     ) {
         await this.writeLine(`Thinking: ${data.thinking}`);
+    }
+
+    private async writeTextMessageContent(
+        data: z.infer<typeof TextMessageContent>,
+    ) {
+        await this.writeLine(data.text);
     }
 
     private async writeBashToolCall(toolCall: z.infer<typeof BashToolCall>) {

@@ -5,6 +5,11 @@ export const ThinkingMessageContent = z.object({
     thinking: z.string(),
 });
 
+export const TextMessageContent = z.object({
+    type: z.literal("text"),
+    text: z.string(),
+});
+
 export const ToolUseMessageContent = z.object({
     type: z.literal("tool_use"),
     name: z.string(),
@@ -13,5 +18,6 @@ export const ToolUseMessageContent = z.object({
 
 export const AssistantMessageContent = z.discriminatedUnion("type", [
     ThinkingMessageContent,
+    TextMessageContent,
     ToolUseMessageContent,
 ]);
