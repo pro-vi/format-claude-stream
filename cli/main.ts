@@ -1,10 +1,10 @@
 #!/usr/bin/env -S node --import @swc-node/register/esm-register
 
 import readline from "readline";
-import {ParserFormatter} from "../src/parser-formatter.ts";
+import {ClaudeStreamFormatter} from "../src/claude-stream-formatter.ts";
 import {StandardOutput} from "../src/standard-output.ts";
 
-const pf = new ParserFormatter(new StandardOutput());
+const pf = new ClaudeStreamFormatter(new StandardOutput());
 
 const rl = readline.createInterface({
   input: process.stdin,

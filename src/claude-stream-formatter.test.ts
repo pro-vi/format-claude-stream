@@ -1,18 +1,18 @@
 import {describe, it, expect} from "@jest/globals";
 import {OutputFake} from "./output.fake.ts";
 import dedent from "dedent";
-import {ParserFormatter} from "./parser-formatter.ts";
+import {ClaudeStreamFormatter} from "./claude-stream-formatter.ts";
 
-describe("an output stream parser/formatter", () => {
+describe("ClaudeStreamFormatter", () => {
     it("does not write to output when merely created", () => {
         const outputFake = new OutputFake();
-        new ParserFormatter(outputFake);
+        new ClaudeStreamFormatter(outputFake);
         expect(outputFake.value()).toBe("");
     });
 
     it("ignores empty JSON payloads", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({});
 
@@ -21,7 +21,7 @@ describe("an output stream parser/formatter", () => {
 
     it("ignores JSON payloads with unrecognized `type`", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({type: "bork-bork-bork"});
 
@@ -32,7 +32,7 @@ describe("an output stream parser/formatter", () => {
 
     it("formats a Bash tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",
@@ -60,7 +60,7 @@ describe("an output stream parser/formatter", () => {
 
     it("formats a Read tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",
@@ -85,7 +85,7 @@ describe("an output stream parser/formatter", () => {
 
     it("formats an Edit tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",
@@ -110,7 +110,7 @@ describe("an output stream parser/formatter", () => {
 
     it("formats thinking", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",
@@ -130,7 +130,7 @@ describe("an output stream parser/formatter", () => {
 
     it("formats a grep tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",
@@ -155,7 +155,7 @@ describe("an output stream parser/formatter", () => {
 
     it("escapes slashes in a grep pattern", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",
@@ -180,7 +180,7 @@ describe("an output stream parser/formatter", () => {
 
     it("writes an unrecognized tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ParserFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake);
 
         await pf.write({
             type: "assistant",

@@ -15,7 +15,7 @@ import {
     UnrecognizedToolCall,
 } from "./formats/tool-calls.ts";
 
-export class ParserFormatter {
+export class ClaudeStreamFormatter {
     constructor(private output: Output) {}
 
     async write(data: unknown): Promise<void> {
