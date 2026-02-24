@@ -2,17 +2,20 @@ import {describe, it, expect} from "@jest/globals";
 import {OutputFake} from "./output.fake.ts";
 import dedent from "dedent";
 import {ClaudeStreamFormatter} from "./claude-stream-formatter.ts";
+import {NullColorizer} from "./null-colorizer.ts";
+
+const nullColorizer = new NullColorizer();
 
 describe("ClaudeStreamFormatter", () => {
     it("does not write to output when merely created", () => {
         const outputFake = new OutputFake();
-        new ClaudeStreamFormatter(outputFake);
+        new ClaudeStreamFormatter(outputFake, nullColorizer);
         expect(outputFake.value()).toBe("");
     });
 
     it("ignores empty JSON payloads", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({});
 
@@ -21,7 +24,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("ignores JSON payloads with unrecognized `type`", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({type: "bork-bork-bork"});
 
@@ -32,7 +35,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("formats a Bash tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -60,7 +63,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("formats a Read tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -85,7 +88,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("formats an Edit tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -110,7 +113,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("formats thinking", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -130,7 +133,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("formats a grep tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -155,7 +158,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("escapes slashes in a grep pattern", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -180,7 +183,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("writes an unrecognized tool call", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",
@@ -205,7 +208,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("writes a result payload", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "result",
@@ -259,7 +262,7 @@ describe("ClaudeStreamFormatter", () => {
 
     it("writes a text message intended for the user", async () => {
         const outputFake = new OutputFake();
-        const pf = new ClaudeStreamFormatter(outputFake);
+        const pf = new ClaudeStreamFormatter(outputFake, nullColorizer);
 
         await pf.write({
             type: "assistant",

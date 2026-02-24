@@ -20,9 +20,21 @@ import {
     UnrecognizedToolCall,
 } from "./formats/tool-calls.ts";
 import {UserMessageContent} from "./formats/user-message.ts";
+import {Colorizer} from "./colorizer.type.ts";
 
 export class ClaudeStreamFormatter {
-    constructor(private output: Output) {}
+    private dimClaudeOrange: (text: string) => string;
+    private brightClaudeOrange: (text: string) => string;
+    private brightGreen: (text: string) => string;
+
+    constructor(
+        private output: Output,
+        colorizer: Colorizer,
+    ) {
+        this.dimClaudeOrange = colorizer.hex("#c1795e");
+        this.brightClaudeOrange = colorizer.hex("#ff7d4d");
+        this.brightGreen = colorizer.hex("#88ee88");
+    }
 
     async write(data: unknown): Promise<void> {
         const parsed = StreamLine.safeParse(data);
@@ -117,13 +129,15 @@ export class ClaudeStreamFormatter {
     private async writeThinkingMessageContent(
         data: z.infer<typeof ThinkingMessageContent>,
     ) {
-        await this.writeLine(`Thinking: ${data.thinking}`);
+        await this.writeLine(
+            this.dimClaudeOrange(`Thinking: ${data.thinking}`),
+        );
     }
 
     private async writeTextMessageContent(
         data: z.infer<typeof TextMessageContent>,
     ) {
-        await this.writeLine(data.text);
+        await this.writeLine(this.brightClaudeOrange(data.text));
     }
 
     private async writeToolResultMessageContent(
@@ -134,7 +148,10 @@ export class ClaudeStreamFormatter {
 
     private async writeBashToolCall(toolCall: z.infer<typeof BashToolCall>) {
         await this.writeLine(
-            `${toolCall.input.description}:\n${toolCall.name}: ${toolCall.input.command}`,
+            this.dimClaudeOrange(`${toolCall.input.description}:`),
+        );
+        await this.writeLine(
+            this.brightGreen(`${toolCall.name}: ${toolCall.input.command}`),
         );
     }
 

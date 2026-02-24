@@ -3,8 +3,9 @@
 import readline from "readline";
 import {ClaudeStreamFormatter} from "../src/claude-stream-formatter.ts";
 import {StandardOutput} from "../src/standard-output.ts";
+import {ChalkColorizer} from "../src/chalk-colorizer.ts";
 
-const pf = new ClaudeStreamFormatter(new StandardOutput());
+const pf = new ClaudeStreamFormatter(new StandardOutput(), new ChalkColorizer());
 
 const rl = readline.createInterface({
   input: process.stdin,
