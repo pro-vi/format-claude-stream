@@ -1,7 +1,7 @@
 import * as z from "zod";
 import {StreamLine} from "./formats/stream-line.ts";
 import {Output} from "./output.type.ts";
-import type {AssistantLine} from "./formats/stream-line.ts";
+import type {AssistantLine, ResultLine} from "./formats/stream-line.ts";
 import {
     ThinkingMessageContent,
     ToolUseMessageContent,
@@ -29,6 +29,13 @@ export class ClaudeStreamFormatter {
         switch (parsed.data.type) {
             case "assistant":
                 await this.writeAssistantLine(parsed.data);
+                return;
+            case "result":
+                await this.writeResultLine(parsed.data);
+                return;
+            default:
+                await this.writeLine(JSON.stringify(parsed.data));
+                return;
         }
     }
 
@@ -43,6 +50,10 @@ export class ClaudeStreamFormatter {
                     return;
             }
         }
+    }
+
+    private async writeResultLine(data: z.infer<typeof ResultLine>) {
+        this.writeLine(data.result);
     }
 
     private async writeToolUseMessageContent(

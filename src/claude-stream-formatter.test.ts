@@ -202,4 +202,58 @@ describe("ClaudeStreamFormatter", () => {
             `Unrecognized tool call: UncannyValley {"foo":"bar"}\n`,
         );
     });
+
+    it("writes a result payload", async () => {
+        const outputFake = new OutputFake();
+        const pf = new ClaudeStreamFormatter(outputFake);
+
+        await pf.write({
+            type: "result",
+            subtype: "success",
+            result: "Done!",
+            total_cost_usd: 0.6614302499999999,
+            usage: {
+                input_tokens: 21,
+                cache_creation_input_tokens: 25307,
+                cache_read_input_tokens: 701343,
+                output_tokens: 5141,
+                server_tool_use: {
+                    web_search_requests: 0,
+                    web_fetch_requests: 0,
+                },
+                service_tier: "standard",
+                cache_creation: {
+                    ephemeral_1h_input_tokens: 0,
+                    ephemeral_5m_input_tokens: 25307,
+                },
+                inference_geo: "",
+                iterations: [],
+                speed: "standard",
+            },
+            modelUsage: {
+                "claude-sonnet-4-6": {
+                    inputTokens: 21,
+                    outputTokens: 5141,
+                    cacheReadInputTokens: 701343,
+                    cacheCreationInputTokens: 25307,
+                    webSearchRequests: 0,
+                    costUSD: 0.63747025,
+                    contextWindow: 200000,
+                    maxOutputTokens: 32000,
+                },
+                "claude-haiku-4-5-20251001": {
+                    inputTokens: 14945,
+                    outputTokens: 1803,
+                    cacheReadInputTokens: 0,
+                    cacheCreationInputTokens: 0,
+                    webSearchRequests: 0,
+                    costUSD: 0.023960000000000002,
+                    contextWindow: 200000,
+                    maxOutputTokens: 32000,
+                },
+            },
+        });
+
+        expect(outputFake.value()).toBe("Done!\n");
+    });
 });

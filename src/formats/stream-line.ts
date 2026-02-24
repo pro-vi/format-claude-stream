@@ -9,8 +9,9 @@ export const AssistantLine = z.object({
     }),
 });
 
-const ResultLine = z.object({
+export const ResultLine = z.object({
     type: z.literal("result"),
+    result: z.string(),
 });
 
 const StreamEventLine = z.object({
