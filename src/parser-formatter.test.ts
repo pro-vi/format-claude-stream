@@ -28,7 +28,7 @@ describe("an output stream parser/formatter", () => {
         expect(outputFake.value()).toBe("");
     });
 
-    it("formats a tool call", async () => {
+    it("formats a Bash tool call", async () => {
         const outputFake = new OutputFake();
         const pf = new ParserFormatter(outputFake);
 
