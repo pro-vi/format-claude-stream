@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "verify": "tsc && jest",
+    "verify": "tsc && jest && prettier --check src",
     "test": "jest",
-    "fix": "prettier -w src"
+    "fix": "prettier --write src"
   },
   "packageManager": "pnpm@10.26.0",
   "prettier": {
