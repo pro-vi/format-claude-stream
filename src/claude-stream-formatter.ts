@@ -1,11 +1,7 @@
 import * as z from "zod";
 import {StreamLine} from "./formats/stream-line.ts";
 import {Output} from "./output.type.ts";
-import type {
-    AssistantLine,
-    ResultLine,
-    UserLine,
-} from "./formats/stream-line.ts";
+import type {AssistantLine, UserLine} from "./formats/stream-line.ts";
 import {
     TextMessageContent,
     ThinkingMessageContent,
@@ -49,7 +45,8 @@ export class ClaudeStreamFormatter {
                 await this.writeAssistantLine(parsed.data);
                 break;
             case "result":
-                await this.writeResultLine(parsed.data);
+                // Result lines seem to just repeat text output earlier by
+                // the assistant, so we ignore them.
                 break;
             case "stream_event":
                 // These events provide incrementally streamed data, which is
@@ -80,10 +77,6 @@ export class ClaudeStreamFormatter {
                     break;
             }
         }
-    }
-
-    private async writeResultLine(data: z.infer<typeof ResultLine>) {
-        this.writeLine(data.result);
     }
 
     private async writeUserLine(data: z.infer<typeof UserLine>) {
@@ -129,9 +122,7 @@ export class ClaudeStreamFormatter {
     private async writeThinkingMessageContent(
         data: z.infer<typeof ThinkingMessageContent>,
     ) {
-        await this.writeLine(
-            this.dimYellow(`Thinking: ${data.thinking}`),
-        );
+        await this.writeLine(this.dimYellow(`Thinking: ${data.thinking}`));
     }
 
     private async writeTextMessageContent(
@@ -147,12 +138,7 @@ export class ClaudeStreamFormatter {
     }
 
     private async writeBashToolCall(toolCall: z.infer<typeof BashToolCall>) {
-        await this.writeLine(
-            this.dimYellow(`${toolCall.input.description}:`),
-        );
-        await this.writeLine(
-            this.brightGreen(`${toolCall.name}: ${toolCall.input.command}`),
-        );
+        await this.writeLine(this.brightGreen(`$ ${toolCall.input.command}`));
     }
 
     private async writeReadToolCall(toolCall: z.infer<typeof ReadToolCall>) {
