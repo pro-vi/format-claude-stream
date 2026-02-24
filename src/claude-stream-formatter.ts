@@ -1,12 +1,15 @@
 import * as z from "zod";
-import {StreamJsonLine} from "./formats/stream-json-line.ts";
+import {StreamJsonLine} from "./claude-stream-json-schema/stream-json-line.ts";
 import {Output} from "./output.type.ts";
-import type {AssistantLine, UserLine} from "./formats/stream-json-line.ts";
+import type {
+    AssistantLine,
+    UserLine,
+} from "./claude-stream-json-schema/stream-json-line.ts";
 import {
     TextMessageContent,
     ThinkingMessageContent,
     ToolUseMessageContent,
-} from "./formats/assistant-message.ts";
+} from "./claude-stream-json-schema/assistant-message.ts";
 import {
     BashToolCall,
     EditToolCall,
@@ -14,8 +17,8 @@ import {
     ReadToolCall,
     ToolCall,
     UnrecognizedToolCall,
-} from "./formats/tool-calls.ts";
-import {UserMessageContent} from "./formats/user-message.ts";
+} from "./claude-stream-json-schema/tool-calls.ts";
+import {UserMessageContent} from "./claude-stream-json-schema/user-message.ts";
 import {Colorizer} from "./colorizer.type.ts";
 
 export class ClaudeStreamFormatter {
