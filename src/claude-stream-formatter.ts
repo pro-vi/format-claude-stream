@@ -12,16 +12,16 @@ import {
 } from "./claude-stream-json-schema/tool-calls.ts";
 import {Colorizer} from "./colorizer-type.ts";
 import {Interpreter} from "./interpreter.ts";
-import {GenericToolCall} from "./claude-io-events/generic-tool-call.ts";
-import {GrepToolCall} from "./claude-io-events/grep-tool-call.ts";
-import {EditToolCall} from "./claude-io-events/edit-tool-call.ts";
-import {ReadToolCall} from "./claude-io-events/read-tool-call.ts";
-import {BashToolCall} from "./claude-io-events/bash-tool-call.ts";
-import {TextOutput} from "./claude-io-events/text-output.ts";
-import {Thinking} from "./claude-io-events/thinking.ts";
-import {GenericToolResult} from "./claude-io-events/generic-tool-result.ts";
-import {ClaudeIOEvent} from "./claude-io-events/claude-io-event.type.ts";
-import {UnrecognizedJsonEvent} from "./claude-io-events/unrecognized-json-event.ts";
+import {GenericToolCall} from "./core/generic-tool-call.ts";
+import {GrepToolCall} from "./core/grep-tool-call.ts";
+import {EditToolCall} from "./core/edit-tool-call.ts";
+import {ReadToolCall} from "./core/read-tool-call.ts";
+import {BashToolCall} from "./core/bash-tool-call.ts";
+import {TextOutput} from "./core/text-output.ts";
+import {Thinking} from "./core/thinking.ts";
+import {GenericToolResult} from "./core/generic-tool-result.ts";
+import {ClaudeIOEvent} from "./core/claude-io-event.type.ts";
+import {UnrecognizedJsonEvent} from "./core/unrecognized-json-event.ts";
 import {UnreachableCodeError} from "./unreachable-code-error.ts";
 
 export class ClaudeStreamFormatter {

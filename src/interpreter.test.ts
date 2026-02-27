@@ -1,6 +1,6 @@
 import {describe, expect, it} from "@jest/globals";
 import {OutputFake} from "./output.fake.ts";
-import {GenericToolCall} from "./claude-io-events/generic-tool-call.ts";
+import {GenericToolCall} from "./core/generic-tool-call.ts";
 import {NullColorizer} from "./null-colorizer.ts";
 import {Interpreter} from "./interpreter.ts";
 
