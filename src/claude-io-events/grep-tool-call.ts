@@ -1,7 +1,7 @@
 import {Colorizer} from "../colorizer.type.ts";
 import {ClaudeIOEvent} from "./claude-io-event.type.ts";
 
-export class BashToolCall implements ClaudeIOEvent {
+export class GrepToolCall implements ClaudeIOEvent {
     constructor(
         private readonly pattern: string,
         private readonly path: string,
