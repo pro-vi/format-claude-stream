@@ -19,7 +19,7 @@ export class ChalkColorizer implements Colorizer {
     }
 
     error(text: string): string {
-        return this.color("#ff5555", text);
+        return this.color("#ff7755", text);
     }
 
     private color(code: string, text: string): string {
