@@ -21,57 +21,51 @@ import {TextOutput} from "./claude-io-events/text-output.ts";
 import {Thinking} from "./claude-io-events/thinking.ts";
 import {GenericToolResult} from "./claude-io-events/generic-tool-result.ts";
 import {ClaudeIOEvent} from "./claude-io-events/claude-io-event.type.ts";
+import {UnrecognizedJsonEvent} from "./claude-io-events/unrecognized-json-event.ts";
 
 export class ClaudeStreamFormatter {
     interpreter: Interpreter;
 
-    constructor(
-        private output: Output,
-        colorizer: Colorizer,
-    ) {
+    constructor(output: Output, colorizer: Colorizer) {
         this.interpreter = new Interpreter(output, colorizer);
     }
 
     async write(data: unknown): Promise<void> {
+        const events = this.parseEvents(data);
+        for (const event of events) {
+            await this.interpreter.process(event);
+        }
+    }
+
+    private parseEvents(data: unknown): ClaudeIOEvent[] {
         const parsed = StreamJsonLine.safeParse(data);
 
         if (!parsed.success) {
-            await this.writeLine(`Unrecognized JSON: ${JSON.stringify(data)}`);
-            return;
+            return [new UnrecognizedJsonEvent(data)];
         }
 
         switch (parsed.data.type) {
             case "assistant":
-                await this.writeAssistantLine(parsed.data);
-                break;
+                return this.parseOutputEvents(parsed.data);
             case "result":
                 // Result lines seem to just repeat text output earlier by
                 // the assistant, so we ignore them.
-                break;
+                return [];
             case "stream_event":
                 // These events provide incrementally streamed data, which is
                 // also rolled up into other event types. We don't care about
                 // streaming tokens to output as fast as they come in, so we
                 // ignore these events.
-                break;
+                return [];
             case "user":
-                await this.writeUserLine(parsed.data);
-                break;
+                return this.parseToolResultEvents(parsed.data);
             default:
-                await this.writeLine(JSON.stringify(parsed.data));
-                break;
-        }
-    }
-
-    private async writeAssistantLine(data: z.infer<typeof AssistantLine>) {
-        for (const event of this.parseOutputEvents(data)) {
-            await this.interpreter.process(event);
-        }
-    }
-
-    private async writeUserLine(data: z.infer<typeof UserLine>) {
-        for (const event of this.parseToolResultEvents(data)) {
-            this.interpreter.process(event);
+                // TODO: extract an UnreachableCodeError class
+                parsed.data satisfies never;
+                throw new Error(
+                    "parseEvents: unhandled event type: " +
+                        (parsed.data as any).type,
+                );
         }
     }
 
@@ -129,9 +123,5 @@ export class ClaudeStreamFormatter {
                         (toolCall as any).name,
                 );
         }
-    }
-
-    private async writeLine(text: string) {
-        await this.output.write(text + "\n");
     }
 }

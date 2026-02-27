@@ -8,6 +8,8 @@ import {MarkupColorizer} from "./markup-colorizer.ts";
 const nullColorizer = new NullColorizer();
 const markupColorizer = new MarkupColorizer();
 
+// TODO: Move these tests to interpreter.test.ts. Rewrite them to call
+// Interpreter.process() directly instead of ClaudeStreamFormatter.write().
 describe("ClaudeStreamFormatter", () => {
     it("does not write to output when merely created", () => {
         const outputFake = new OutputFake();
