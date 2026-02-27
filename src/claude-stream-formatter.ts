@@ -24,6 +24,7 @@ import {Interpreter} from "./interpreter.ts";
 import {GenericToolCall} from "./claude-io-events/generic-tool-call.ts";
 import {GrepToolCall as GrepToolCallEvent} from "./claude-io-events/grep-tool-call.ts";
 import {EditToolCall as EditToolCallEvent} from "./claude-io-events/edit-tool-call.ts";
+import {ReadToolCall as ReadToolCallEvent} from "./claude-io-events/read-tool-call.ts";
 
 export class ClaudeStreamFormatter {
     interpreter: Interpreter;
@@ -149,9 +150,8 @@ export class ClaudeStreamFormatter {
     }
 
     private async writeReadToolCall(toolCall: z.infer<typeof ReadToolCall>) {
-        await this.writeLine(
-            this.colorizer.action(`Read: ${toolCall.input.file_path}`),
-        );
+        const event = new ReadToolCallEvent(toolCall.input.file_path);
+        await this.interpreter.process(event);
     }
 
     private async writeEditToolCall(toolCall: z.infer<typeof EditToolCall>) {
