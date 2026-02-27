@@ -11,10 +11,6 @@ import {
     ToolUseMessageContent,
 } from "./claude-stream-json-schema/assistant-message.ts";
 import {
-    BashToolCall,
-    EditToolCall,
-    GrepToolCall,
-    ReadToolCall,
     ToolCall,
     UnrecognizedToolCall,
 } from "./claude-stream-json-schema/tool-calls.ts";
@@ -29,6 +25,7 @@ import {BashToolCall as BashToolCallEvent} from "./claude-io-events/bash-tool-ca
 import {TextOutput} from "./claude-io-events/text-output.ts";
 import {Thinking} from "./claude-io-events/thinking.ts";
 import {GenericToolResult} from "./claude-io-events/generic-tool-result.ts";
+import {ClaudeIOEvent} from "./claude-io-events/claude-io-event.type.ts";
 
 export class ClaudeStreamFormatter {
     interpreter: Interpreter;
@@ -100,30 +97,40 @@ export class ClaudeStreamFormatter {
     private async writeToolUseMessageContent(
         data: z.infer<typeof ToolUseMessageContent>,
     ) {
+        const event = this.parseToolCallEvent(data);
+        await this.interpreter.process(event);
+    }
+
+    private parseToolCallEvent(
+        data: z.infer<typeof ToolUseMessageContent>,
+    ): ClaudeIOEvent {
         const parsedToolCall = ToolCall.safeParse(data);
 
         if (!parsedToolCall.success) {
-            await this.writeUnrecognizedToolCall(data);
-            return;
+            const toolCall = UnrecognizedToolCall.parse(data);
+            return new GenericToolCall(toolCall.name, toolCall.input);
         }
 
         const toolCall = parsedToolCall.data;
 
         switch (toolCall.name) {
             case "Bash":
-                await this.writeBashToolCall(toolCall);
-                break;
+                return new BashToolCallEvent(toolCall.input.command);
             case "Read":
-                await this.writeReadToolCall(toolCall);
-                break;
+                return new ReadToolCallEvent(toolCall.input.file_path);
             case "Edit":
-                await this.writeEditToolCall(toolCall);
-                break;
+                return new EditToolCallEvent(toolCall.input.file_path);
             case "Grep":
-                await this.writeGrepToolCall(toolCall);
-                break;
+                return new GrepToolCallEvent(
+                    toolCall.input.pattern,
+                    toolCall.input.path,
+                );
             default:
-                await this.writeUnrecognizedToolCall(toolCall);
+                toolCall satisfies never;
+                throw new Error(
+                    "parseToolCallEvent: unhandled tool: " +
+                        (toolCall as any).name,
+                );
         }
     }
 
@@ -145,40 +152,6 @@ export class ClaudeStreamFormatter {
         data: z.infer<typeof UserMessageContent>,
     ) {
         const event = new GenericToolResult(data.content);
-        await this.interpreter.process(event);
-    }
-
-    private async writeBashToolCall(toolCall: z.infer<typeof BashToolCall>) {
-        const event = new BashToolCallEvent(toolCall.input.command);
-        await this.interpreter.process(event);
-    }
-
-    private async writeReadToolCall(toolCall: z.infer<typeof ReadToolCall>) {
-        const event = new ReadToolCallEvent(toolCall.input.file_path);
-        await this.interpreter.process(event);
-    }
-
-    private async writeEditToolCall(toolCall: z.infer<typeof EditToolCall>) {
-        const event = new EditToolCallEvent(toolCall.input.file_path);
-        await this.interpreter.process(event);
-    }
-
-    private async writeGrepToolCall(toolCall: z.infer<typeof GrepToolCall>) {
-        const event = new GrepToolCallEvent(
-            toolCall.input.pattern,
-            toolCall.input.path,
-        );
-        await this.interpreter.process(event);
-    }
-
-    private async writeUnrecognizedToolCall(raw: unknown) {
-        // TODO: Interpreter is a strangler fig that will eventually replace
-        // the ClaudeStreamFormatter. Replace the other occurrences of
-        // this.writeLine() in this class with interpreter.process() calls as
-        // below. If no appropriate event class exists, create one in
-        // src/claude-io-events.
-        const toolCall = UnrecognizedToolCall.parse(raw);
-        const event = new GenericToolCall(toolCall.name, toolCall.input);
         await this.interpreter.process(event);
     }
 
