@@ -63,6 +63,18 @@ export class ClaudeStreamFormatter {
         }
     }
 
+    private async writeAssistantLine(data: z.infer<typeof AssistantLine>) {
+        for (const event of this.parseOutputEvents(data)) {
+            await this.interpreter.process(event);
+        }
+    }
+
+    private async writeUserLine(data: z.infer<typeof UserLine>) {
+        for (const event of this.parseToolResultEvents(data)) {
+            this.interpreter.process(event);
+        }
+    }
+
     private parseOutputEvents(
         data: z.infer<typeof AssistantLine>,
     ): ClaudeIOEvent[] {
@@ -76,18 +88,6 @@ export class ClaudeStreamFormatter {
                     return new TextOutput(content.text);
             }
         });
-    }
-
-    private async writeAssistantLine(data: z.infer<typeof AssistantLine>) {
-        for (const event of this.parseOutputEvents(data)) {
-            await this.interpreter.process(event);
-        }
-    }
-
-    private async writeUserLine(data: z.infer<typeof UserLine>) {
-        for (const event of this.parseToolResultEvents(data)) {
-            this.interpreter.process(event);
-        }
     }
 
     private parseToolResultEvents(
