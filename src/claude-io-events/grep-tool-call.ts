@@ -1,4 +1,4 @@
-import {Colorizer} from "../colorizer.type.ts";
+import {Colorizer} from "../colorizer-type.ts";
 import {ClaudeIOEvent} from "./claude-io-event.type.ts";
 
 export class GrepToolCall implements ClaudeIOEvent {
@@ -8,8 +8,7 @@ export class GrepToolCall implements ClaudeIOEvent {
     ) {}
 
     format(colorizer: Colorizer): string {
-        const color = colorizer.hex("#88aa88");
-        return color(
+        return colorizer.action(
             `Searching for /${escape(this.pattern)}/ in ${this.path} ...`,
         );
     }

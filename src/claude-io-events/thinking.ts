@@ -1,11 +1,10 @@
-import {Colorizer} from "../colorizer.type.ts";
+import {Colorizer} from "../colorizer-type.ts";
 import {ClaudeIOEvent} from "./claude-io-event.type.ts";
 
 export class Thinking implements ClaudeIOEvent {
     constructor(private readonly thoughts: string) {}
 
     format(colorizer: Colorizer) {
-        const color = colorizer.hex("#bbaa66");
-        return color(this.thoughts);
+        return colorizer.claudeThinking(this.thoughts);
     }
 }

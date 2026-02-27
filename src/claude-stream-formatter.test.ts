@@ -83,7 +83,7 @@ describe("ClaudeStreamFormatter", () => {
         });
 
         expect(outputFake.value()).toBe(
-            "[[#88ee88 $ pnpm test 2>&1 | tail -100]]\n",
+            "[[importantAction $ pnpm test 2>&1 | tail -100]]\n",
         );
     });
 
@@ -175,7 +175,7 @@ describe("ClaudeStreamFormatter", () => {
         });
 
         expect(outputFake.value()).toBe(
-            "[[#bbaa66 Thinking: Mmm... donuts]]\n",
+            "[[claudeThinking Thinking: Mmm... donuts]]\n",
         );
     });
 
@@ -289,6 +289,6 @@ describe("ClaudeStreamFormatter", () => {
             },
         });
 
-        expect(outputFake.value()).toBe("[[#ffcc00 Hello!]]\n");
+        expect(outputFake.value()).toBe("[[claudeSpeaking Hello!]]\n");
     });
 });

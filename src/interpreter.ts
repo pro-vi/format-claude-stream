@@ -1,5 +1,5 @@
 import {ClaudeIOEvent} from "./claude-io-events/claude-io-event.type.ts";
-import {Colorizer} from "./colorizer.type.ts";
+import {Colorizer} from "./colorizer-type.ts";
 import {Output} from "./output.type.ts";
 
 export class Interpreter {

@@ -19,23 +19,15 @@ import {
     UnrecognizedToolCall,
 } from "./claude-stream-json-schema/tool-calls.ts";
 import {UserMessageContent} from "./claude-stream-json-schema/user-message.ts";
-import {Colorizer} from "./colorizer.type.ts";
+import {Colorizer} from "./colorizer-type.ts";
 import {Interpreter} from "./interpreter.ts";
 import {GenericToolCall} from "./claude-io-events/generic-tool-call.ts";
 
 export class ClaudeStreamFormatter {
-    private dimYellow: (text: string) => string;
-    private brightYellow: (text: string) => string;
-    private brightGreen: (text: string) => string;
-
     constructor(
         private output: Output,
         private colorizer: Colorizer,
-    ) {
-        this.dimYellow = colorizer.hex("#bbaa66");
-        this.brightYellow = colorizer.hex("#ffcc00");
-        this.brightGreen = colorizer.hex("#88ee88");
-    }
+    ) {}
 
     async write(data: unknown): Promise<void> {
         const parsed = StreamJsonLine.safeParse(data);
@@ -127,13 +119,15 @@ export class ClaudeStreamFormatter {
     private async writeThinkingMessageContent(
         data: z.infer<typeof ThinkingMessageContent>,
     ) {
-        await this.writeLine(this.dimYellow(`Thinking: ${data.thinking}`));
+        await this.writeLine(
+            this.colorizer.claudeThinking(`Thinking: ${data.thinking}`),
+        );
     }
 
     private async writeTextMessageContent(
         data: z.infer<typeof TextMessageContent>,
     ) {
-        await this.writeLine(this.brightYellow(data.text));
+        await this.writeLine(this.colorizer.claudeSpeaking(data.text));
     }
 
     private async writeToolResultMessageContent(
@@ -143,7 +137,9 @@ export class ClaudeStreamFormatter {
     }
 
     private async writeBashToolCall(toolCall: z.infer<typeof BashToolCall>) {
-        await this.writeLine(this.brightGreen(`$ ${toolCall.input.command}`));
+        await this.writeLine(
+            this.colorizer.importantAction(`$ ${toolCall.input.command}`),
+        );
     }
 
     private async writeReadToolCall(toolCall: z.infer<typeof ReadToolCall>) {
