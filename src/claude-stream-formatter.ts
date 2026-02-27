@@ -14,7 +14,6 @@ import {
     ToolCall,
     UnrecognizedToolCall,
 } from "./claude-stream-json-schema/tool-calls.ts";
-import {UserMessageContent} from "./claude-stream-json-schema/user-message.ts";
 import {Colorizer} from "./colorizer-type.ts";
 import {Interpreter} from "./interpreter.ts";
 import {GenericToolCall} from "./claude-io-events/generic-tool-call.ts";
@@ -85,13 +84,17 @@ export class ClaudeStreamFormatter {
     }
 
     private async writeUserLine(data: z.infer<typeof UserLine>) {
-        for (const content of data.message.content) {
-            switch (content.type) {
-                case "tool_result":
-                    await this.writeToolResultMessageContent(content);
-                    break;
-            }
+        for (const event of this.parseToolResultEvents(data)) {
+            this.interpreter.process(event);
         }
+    }
+
+    private parseToolResultEvents(
+        data: z.infer<typeof UserLine>,
+    ): ClaudeIOEvent[] {
+        return data.message.content.map(({content}) => {
+            return new GenericToolResult(content);
+        });
     }
 
     private async writeToolUseMessageContent(
@@ -145,13 +148,6 @@ export class ClaudeStreamFormatter {
         data: z.infer<typeof TextMessageContent>,
     ) {
         const event = new TextOutput(data.text);
-        await this.interpreter.process(event);
-    }
-
-    private async writeToolResultMessageContent(
-        data: z.infer<typeof UserMessageContent>,
-    ) {
-        const event = new GenericToolResult(data.content);
         await this.interpreter.process(event);
     }
 
