@@ -22,6 +22,7 @@ import {Thinking} from "./claude-io-events/thinking.ts";
 import {GenericToolResult} from "./claude-io-events/generic-tool-result.ts";
 import {ClaudeIOEvent} from "./claude-io-events/claude-io-event.type.ts";
 import {UnrecognizedJsonEvent} from "./claude-io-events/unrecognized-json-event.ts";
+import {UnreachableCodeError} from "./unreachable-code-error.ts";
 
 export class ClaudeStreamFormatter {
     interpreter: Interpreter;
@@ -60,12 +61,7 @@ export class ClaudeStreamFormatter {
             case "user":
                 return this.parseToolResultEvents(parsed.data);
             default:
-                // TODO: extract an UnreachableCodeError class
-                parsed.data satisfies never;
-                throw new Error(
-                    "parseEvents: unhandled event type: " +
-                        (parsed.data as any).type,
-                );
+                throw new UnreachableCodeError(parsed.data);
         }
     }
 
@@ -117,11 +113,7 @@ export class ClaudeStreamFormatter {
                     toolCall.input.path,
                 );
             default:
-                toolCall satisfies never;
-                throw new Error(
-                    "parseToolCallEvent: unhandled tool: " +
-                        (toolCall as any).name,
-                );
+                throw new UnreachableCodeError(toolCall);
         }
     }
 }
