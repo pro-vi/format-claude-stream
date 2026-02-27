@@ -7,11 +7,11 @@ export class ChalkColorizer implements Colorizer {
     }
 
     claudeSpeaking(text: string): string {
-        return this.color("#ffcc00", text);
+        return this.color("#ffcc00", chalk.bold(text));
     }
 
     importantAction(text: string): string {
-        return this.color("#88ee88", text);
+        return this.color("#88ee88", chalk.bold(text));
     }
 
     action(text: string): string {
