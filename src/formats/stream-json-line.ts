@@ -11,12 +11,18 @@ export const AssistantLine = z.looseObject({
     message: AssistantMessage,
 });
 
+const ToolUseResult = z.looseObject({
+    // TODO: narrow this type down once I understand it better
+    type: z.optional(z.string()),
+});
+
 /**
  * Represents input to Claude, including tool call results and file contents.
  */
 export const UserLine = z.looseObject({
     type: z.literal("user"),
     message: UserMessage,
+    tool_use_result: z.optional(ToolUseResult),
 });
 
 export const ResultLine = z.looseObject({
