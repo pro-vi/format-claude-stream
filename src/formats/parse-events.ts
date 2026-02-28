@@ -11,13 +11,13 @@ import {ReadToolCall} from "../core/events/read-tool-call.ts";
 import {EditToolCall} from "../core/events/edit-tool-call.ts";
 import {GrepToolCall} from "../core/events/grep-tool-call.ts";
 import {UnreachableCodeError} from "../unreachable-code-error.ts";
+import {UnrecognizedJsonEvent} from "../core/events/unrecognized-json-event.ts";
 
 export function parseEvents(raw: unknown): ClaudeIOEvent[] {
     const parsed = StreamJsonLine.safeParse(raw);
 
     if (!parsed.success) {
-        // TODO: return UnrecognizedJsonEvent
-        return [];
+        return [new UnrecognizedJsonEvent(raw)];
     }
 
     const data = parsed.data;
