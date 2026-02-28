@@ -32,9 +32,14 @@ const SystemLine = z.looseObject({
     type: z.literal("system"),
 });
 
+const RateLimitEventLine = z.looseObject({
+    type: z.literal("rate_limit_event"),
+});
+
 export const StreamJsonLine = z.discriminatedUnion("type", [
     AssistantLine,
     UserLine,
+    RateLimitEventLine,
     ResultLine,
     StreamEventLine,
     SystemLine,

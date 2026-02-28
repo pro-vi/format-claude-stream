@@ -42,6 +42,10 @@ export function parseEvents(data: unknown): ClaudeIOEvent[] {
             // E.g. the "type":"system", "subtype":"init" event. We ignore
             // these.
             return [];
+        case "rate_limit_event":
+            // I'm not sure what these events are for, but they get emitted
+            // every time I run `claude`.
+            return [];
         case "user":
             return parseToolResultEvents(parsed.data);
         default:
