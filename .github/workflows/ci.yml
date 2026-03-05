@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push: {branches: [main]}
+  pull_request:
+    # edited is needed because that's the trigger when the base branch is
+    # changed on a PR
+    # The rest are the defaults.
+    types: [edited, opened, synchronize, reopened]
+
+jobs:
+  changeset:
+    name: Check for .changeset entries for all changed files
+    if: |
+      github.actor != 'dependabot[bot]' &&
+      github.actor != 'dependabot-preview[bot]' &&
+      !startsWith(github.head_ref, 'changeset-release/') &&
+      github.ref != 'refs/heads/main'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [20.x]
+    steps:
+      - name: Check out latest commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      # TODO: is 'Get changed files' needed? Nothing uses 'changed'.
+      - name: Get changed files
+        uses: Khan/actions@get-changed-files-v2
+        id: changed
+
+      - name: Check for changeset entries
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm changeset status --since "origin/${{ github.base_ref }}"
+  verify:
+    name: pnpm verify
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [20.x]
+    steps:
+      - name: Check out latest commit
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}, Setup pnpm, Install & cache node_modules
+        uses: Khan/actions@shared-node-cache-v3
+        with: {node-version: "${{ matrix.node-version }}"}
+
+      - name: Verify
+        run: pnpm run verify
