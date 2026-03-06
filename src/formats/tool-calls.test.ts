@@ -6,6 +6,7 @@ describe("the GrepToolCall schema", () => {
         const grep = {
             type: "tool_use",
             name: "Grep",
+            id: "id1",
             input: {
                 pattern: "a regex",
                 output_mode: "content",

@@ -31,6 +31,7 @@ describe("the StreamJsonLine schema", () => {
                         type: "tool_result",
                         content: "Done!",
                         is_error: false,
+                        tool_use_id: "id1",
                     },
                 ],
             },

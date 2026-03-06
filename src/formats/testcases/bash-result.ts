@@ -25,4 +25,6 @@ export const data = {
     },
 };
 
-export const expected = [new GenericToolResult("content1")];
+export const expected = [
+    new GenericToolResult("content1", "toolu_01UfhLwUgqLEzsGy1NsmDEye"),
+];

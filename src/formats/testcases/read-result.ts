@@ -1,4 +1,5 @@
 import {ClaudeIOEvent} from "../../core/events/claude-io-event.type.ts";
+import {GenericToolResult} from "../../core/events/generic-tool-result.ts";
 
 export const data = {
     type: "user",
@@ -28,4 +29,6 @@ export const data = {
     },
 };
 
-export const expected: ClaudeIOEvent[] = [];
+export const expected: ClaudeIOEvent[] = [
+    new GenericToolResult("content1", "toolu_01GJNdDT37zyA8U9vSShtndC"),
+];

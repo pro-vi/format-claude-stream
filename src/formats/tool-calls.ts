@@ -2,6 +2,7 @@ import * as z from "zod";
 
 export const EditToolCall = z.looseObject({
     name: z.literal("Edit"),
+    id: z.string(),
     input: z.looseObject({
         file_path: z.string(),
     }),
@@ -9,6 +10,7 @@ export const EditToolCall = z.looseObject({
 
 export const ReadToolCall = z.looseObject({
     name: z.literal("Read"),
+    id: z.string(),
     input: z.looseObject({
         file_path: z.string(),
     }),
@@ -16,6 +18,7 @@ export const ReadToolCall = z.looseObject({
 
 export const BashToolCall = z.looseObject({
     name: z.literal("Bash"),
+    id: z.string(),
     input: z.looseObject({
         command: z.string(),
         description: z.string(),
@@ -25,6 +28,7 @@ export const BashToolCall = z.looseObject({
 
 export const GrepToolCall = z.looseObject({
     name: z.literal("Grep"),
+    id: z.string(),
     input: z.looseObject({
         path: z.optional(z.string()),
         pattern: z.string(),
@@ -33,6 +37,7 @@ export const GrepToolCall = z.looseObject({
 
 export const UnrecognizedToolCall = z.looseObject({
     name: z.string(),
+    id: z.string(),
     input: z.any(),
 });
 

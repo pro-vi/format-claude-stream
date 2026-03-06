@@ -87,7 +87,7 @@ function parseToolCallEvent(
         case "Bash":
             return new BashToolCall(toolCall.input.command);
         case "Read":
-            return new ReadToolCall(toolCall.input.file_path);
+            return new ReadToolCall(toolCall.input.file_path, toolCall.id);
         case "Edit":
             return new EditToolCall(toolCall.input.file_path);
         case "Grep":
@@ -103,29 +103,14 @@ function parseToolCallEvent(
 function parseToolResultEvents(
     data: z.infer<typeof UserLine>,
 ): ClaudeIOEvent[] {
-    // There's no need to print file contents to the terminal.
-    if (isFileReadResult(data)) {
-        return [];
-    }
-
-    return data.message.content.map(({content, is_error: isError}) => {
-        if (isError) {
-            return new ToolUseError(
-                content.replace(/<\/?tool_use_error>/g, ""),
-            );
-        }
-        return new GenericToolResult(content);
-    });
-}
-
-function isFileReadResult(data: z.infer<typeof UserLine>): boolean {
-    if (data.tool_use_result == null) {
-        return false;
-    }
-
-    if (typeof data.tool_use_result === "string") {
-        return false;
-    }
-
-    return data.tool_use_result.type === "text";
+    return data.message.content.map(
+        ({content, is_error: isError, tool_use_id: toolUseId}) => {
+            if (isError) {
+                return new ToolUseError(
+                    content.replace(/<\/?tool_use_error>/g, ""),
+                );
+            }
+            return new GenericToolResult(content, toolUseId);
+        },
+    );
 }

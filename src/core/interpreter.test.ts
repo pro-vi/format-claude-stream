@@ -11,6 +11,7 @@ import {ToolUseError} from "./events/tool-use-error.ts";
 import {NullColorizer} from "./ports/null-colorizer.ts";
 import {MarkupColorizer} from "./ports/markup-colorizer.ts";
 import {Interpreter} from "./interpreter.ts";
+import {GenericToolResult} from "./events/generic-tool-result.ts";
 
 describe("Interpreter", () => {
     it("outputs a generic tool call event", async () => {
@@ -51,6 +52,20 @@ describe("Interpreter", () => {
         const interpreter = new Interpreter(outputFake, new NullColorizer());
 
         await interpreter.process(new ReadToolCall("/foo/bar"));
+
+        expect(outputFake.value()).toBe("Read: /foo/bar\n");
+    });
+
+    it("does not output a Read tool result", async () => {
+        // The result of Read tool calls is just the file contents. We don't
+        // really need to see that printed to the terminal.
+        const outputFake = new OutputFake();
+        const interpreter = new Interpreter(outputFake, new NullColorizer());
+
+        await interpreter.process(new ReadToolCall("/foo/bar", "id1"));
+        await interpreter.process(
+            new GenericToolResult("file contents", "id1"),
+        );
 
         expect(outputFake.value()).toBe("Read: /foo/bar\n");
     });
