@@ -44,6 +44,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -58,7 +63,7 @@ jobs:
       # for publishes.
       - name: Upgrade npm for OIDC support
         run: |
-          sudo npm install -g npm@11.11.0
+          npm install -g npm@11.11.0
           echo "✅ npm upgraded to $(npm --version)"
 
       - name: Create Release Pull Request or Publish to npm
