@@ -59,6 +59,11 @@ jobs:
         with:
           publish: pnpm publish:ci
         env:
+          # We use a Personal Access Token here rather than the GITHUB_TOKEN
+          # so that it will trigger our other actions. The token has to be on
+          # the account of someone with appropriate access levels and given the
+          # repo scope.
+          GITHUB_TOKEN: ${{ secrets.KHAN_ACTIONS_BOT_TOKEN }}
           # NPM_CONFIG_PROVENANCE is for trusted publishing. We set this so
           # that (p)npm publish will include the provenance information in the
           # package.json file and surface it in the npm registry. See:
