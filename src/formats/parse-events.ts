@@ -87,7 +87,10 @@ function parseToolCallEvent(
         case "Bash":
             return new BashToolCall(toolCall.input.command);
         case "Read":
-            return new ReadToolCall(toolCall.input.file_path, toolCall.id);
+            return new ReadToolCall({
+                path: toolCall.input.file_path,
+                toolUseId: toolCall.id,
+            });
         case "Edit":
             return new EditToolCall(toolCall.input.file_path);
         case "Grep":

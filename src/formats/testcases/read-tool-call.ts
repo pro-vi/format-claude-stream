@@ -39,5 +39,8 @@ export const data = {
 };
 
 export const expected: ClaudeIOEvent[] = [
-    new ReadToolCall("/foo/bar.ts", "toolu_01GiLvP4m4Hadhmojgvi9koM"),
+    new ReadToolCall({
+        path: "/foo/bar.ts",
+        toolUseId: "toolu_01GiLvP4m4Hadhmojgvi9koM",
+    }),
 ];

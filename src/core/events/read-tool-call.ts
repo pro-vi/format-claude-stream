@@ -1,13 +1,19 @@
 import {Colorizer} from "../ports/colorizer.ts";
 import {ClaudeIOEvent} from "./claude-io-event.type.ts";
 
+export interface ConstructorParams {
+    path: string;
+    toolUseId: string;
+}
+
 export class ReadToolCall implements ClaudeIOEvent {
-    // WISH: use a parameter object here, as in ./generic-tool-result.ts,
-    // and make toolUseId required.
-    constructor(
-        public readonly path: string,
-        public readonly toolUseId = "",
-    ) {}
+    public readonly path: string;
+    public readonly toolUseId: string;
+
+    constructor({path, toolUseId}: ConstructorParams) {
+        this.path = path;
+        this.toolUseId = toolUseId;
+    }
 
     format(colorizer: Colorizer) {
         return colorizer.action(`Read: ${this.path}`);

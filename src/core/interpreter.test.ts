@@ -51,7 +51,9 @@ describe("Interpreter", () => {
         const outputFake = new OutputFake();
         const interpreter = new Interpreter(outputFake, new NullColorizer());
 
-        await interpreter.process(new ReadToolCall("/foo/bar"));
+        await interpreter.process(
+            new ReadToolCall({path: "/foo/bar", toolUseId: ""}),
+        );
 
         expect(outputFake.value()).toBe("Read: /foo/bar\n");
     });
@@ -62,7 +64,9 @@ describe("Interpreter", () => {
         const outputFake = new OutputFake();
         const interpreter = new Interpreter(outputFake, new NullColorizer());
 
-        await interpreter.process(new ReadToolCall("/foo/bar", "id1"));
+        await interpreter.process(
+            new ReadToolCall({path: "/foo/bar", toolUseId: "id1"}),
+        );
         await interpreter.process(
             new GenericToolResult({
                 toolOutput: "file contents",
@@ -77,7 +81,9 @@ describe("Interpreter", () => {
         const outputFake = new OutputFake();
         const interpreter = new Interpreter(outputFake, new MarkupColorizer());
 
-        await interpreter.process(new ReadToolCall("/foo/bar"));
+        await interpreter.process(
+            new ReadToolCall({path: "/foo/bar", toolUseId: ""}),
+        );
 
         expect(outputFake.value()).toBe("[[action Read: /foo/bar]]\n");
     });
