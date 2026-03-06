@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        node-version: [ 20.x ]
+        node-version: [ 24.x ]
     permissions:
       id-token: write # For trusted publishing to npm (includes provenance)
       contents: write # For GitHub pages and creating release PRs
@@ -53,13 +53,11 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
-      # NPM trusted publishing requires npm CLI v11.5.1+. Node.js 22 ships with
-      # npm 10.x, so we need to upgrade. Note that pnpm uses npm under the hood
-      # for publishes.
-      - name: Upgrade npm for OIDC support
+      # NPM trusted publishing requires npm CLI v11.5.1+. Note that pnpm uses
+      # npm under the hood for publishes.
+      - name: Print npm CLI version
         run: |
-          npm install -g npm@latest
-          echo "✅ npm upgraded to $(npm --version)"
+          echo "npm version is $(npm --version)"
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
