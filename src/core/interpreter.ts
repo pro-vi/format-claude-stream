@@ -15,7 +15,7 @@ export class Interpreter {
     ) {}
 
     async process(event: ClaudeIOEvent): Promise<void> {
-        if (this.isFileCrudOp(event)) {
+        if (isFileCrudOp(event)) {
             this.fileCrudToolUseIds.add(event.toolUseId);
         }
         if (this.isFileCrudResult(event)) {
@@ -40,19 +40,11 @@ export class Interpreter {
         }
 
         // Don't write a blank line between consecutive file operations
-        if (
-            this.isFileCrudOp(this.lastWrittenEvent) &&
-            this.isFileCrudOp(event)
-        ) {
+        if (isFileCrudOp(this.lastWrittenEvent) && isFileCrudOp(event)) {
             return false;
         }
 
         return true;
-    }
-
-    // TODO: Fix feature envy; move isFileCrudOp to ClaudeIOEvent.
-    private isFileCrudOp(event: ClaudeIOEvent) {
-        return event instanceof ReadToolCall || event instanceof EditToolCall;
     }
 
     private isFileCrudResult(event: ClaudeIOEvent) {
@@ -61,4 +53,8 @@ export class Interpreter {
             this.fileCrudToolUseIds.has(event.toolUseId)
         );
     }
+}
+
+function isFileCrudOp(event: ClaudeIOEvent) {
+    return event instanceof ReadToolCall || event instanceof EditToolCall;
 }
