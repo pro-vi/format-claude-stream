@@ -41,7 +41,6 @@
     "@swc/jest": "^0.2.39",
     "@swc-node/register": "^1.11.1",
     "@types/node": "^25.3.0",
-    "dedent": "^1.7.1",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "prettier": "^3.8.1",
