@@ -1,6 +1,6 @@
 {
   "name": "@khanacademy/format-claude-stream",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Formats output from `claude --output-format stream-json` as human-readable text",
   "repository": {
     "type": "git",

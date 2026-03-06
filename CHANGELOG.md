@@ -1,5 +1,11 @@
 # @khanacademy/format-claude-stream
 
+## 0.0.3
+
+### Patch Changes
+
+- a7ff63b: Compile CLI to JavaScript instead of relying on @swc-node/register to compile it on the fly.
+
 ## 0.0.2
 
 ### Patch Changes
