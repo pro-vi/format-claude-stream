@@ -92,7 +92,7 @@ function parseToolCallEvent(
                 toolUseId: toolCall.id,
             });
         case "Edit":
-            return new EditToolCall(toolCall.input.file_path);
+            return new EditToolCall(toolCall.input.file_path, toolCall.id);
         case "Grep":
             return new GrepToolCall(
                 toolCall.input.pattern,
