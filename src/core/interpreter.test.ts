@@ -290,4 +290,22 @@ describe("Interpreter", () => {
             "Read: /foo.txt\nRead: /bar.txt\nEdit: /foo.txt\nEdit: /bar.txt\n",
         );
     });
+
+    it("does not output a blank line between a tool call and its error", async () => {
+        const outputFake = new OutputFake();
+        const interpreter = new Interpreter(outputFake, new NullColorizer());
+
+        const events: ClaudeIOEvent[] = [
+            new BashToolCall("echo hello"),
+            new ToolUseError("You don't have permission."),
+        ];
+
+        for (const event of events) {
+            await interpreter.process(event);
+        }
+
+        expect(outputFake.value()).toBe(
+            "$ echo hello\nYou don't have permission.\n",
+        );
+    });
 });

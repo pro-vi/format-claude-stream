@@ -1,5 +1,6 @@
 import {ClaudeIOEvent} from "./events/claude-io-event.type.ts";
 import {ToolUseSuccess} from "./events/tool-use-success.ts";
+import {ToolUseError} from "./events/tool-use-error.ts";
 import {ReadToolCall} from "./events/read-tool-call.ts";
 import {EditToolCall} from "./events/edit-tool-call.ts";
 import {Colorizer} from "./ports/colorizer.ts";
@@ -35,7 +36,7 @@ export class Interpreter {
         }
 
         // Don't write a blank line between a tool call and its result.
-        if (event instanceof ToolUseSuccess) {
+        if (isToolResult(event)) {
             return false;
         }
 
@@ -57,4 +58,8 @@ export class Interpreter {
 
 function isFileCrudOp(event: ClaudeIOEvent) {
     return event instanceof ReadToolCall || event instanceof EditToolCall;
+}
+
+function isToolResult(event: ClaudeIOEvent) {
+    return event instanceof ToolUseSuccess || event instanceof ToolUseError;
 }
