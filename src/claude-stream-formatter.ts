@@ -1,7 +1,7 @@
-import {Output} from "./ports/output.ts";
-import {Colorizer} from "./ports/colorizer.ts";
-import {Interpreter} from "./interpreter.ts";
-import {parseEvents} from "../formats/parse-events.ts";
+import {Output} from "./core/ports/output.ts";
+import {Colorizer} from "./core/ports/colorizer.ts";
+import {Interpreter} from "./core/interpreter.ts";
+import {parseEvents} from "./formats/parse-events.ts";
 
 export class ClaudeStreamFormatter {
     interpreter: Interpreter;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as readline from "readline";
-import {ClaudeStreamFormatter} from "../core/claude-stream-formatter.ts";
+import {ClaudeStreamFormatter} from "../claude-stream-formatter.ts";
 import {StandardOutput} from "../adapters/standard-output.ts";
 import {ChalkColorizer} from "../adapters/chalk-colorizer.ts";
 

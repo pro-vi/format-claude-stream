@@ -1,7 +1,7 @@
 import {describe, it, expect} from "@jest/globals";
-import {OutputFake} from "./ports/output-fake.ts";
+import {OutputFake} from "./core/ports/output-fake.ts";
 import {ClaudeStreamFormatter} from "./claude-stream-formatter.ts";
-import {NullColorizer} from "./ports/null-colorizer.ts";
+import {NullColorizer} from "./core/ports/null-colorizer.ts";
 
 const nullColorizer = new NullColorizer();
 
