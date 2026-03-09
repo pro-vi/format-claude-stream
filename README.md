@@ -10,7 +10,21 @@
 > by [donating](https://khanacademy.org/donate) or looking at
 > [career opportunities](https://khanacademy.org/careers).
 
+## Summary
+
 A CLI filter to turn Claude's streaming JSON output into human-readable text.
+
+In addition to the usual Claude output, `format-claude-stream` prints:
+
+- Chain-of-thought
+- All tool calls, and their results, in an easy-to-read format
+- Tool call errors
+- A raw JSON dump of any events it doesn't understand.
+
+Output is color-coded to make it easier to scan.
+
+With `format-claude-stream`, you can print the live stream or dump the JSON to
+a file and audit it later. With `tee` (see below), you can do both!
 
 ## Installation
 
@@ -23,7 +37,15 @@ npm install -g @khanacademy/format-claude-stream
 ### CLI
 
 ```
-claude --print --output-format stream-json | format-claude-stream
+claude --print --verbose --output-format stream-json | format-claude-stream
+```
+
+You can use [tee] to duplicate the output to a timestamped file:
+
+```
+claude --print --verbose --output-format stream-json \
+  | tee "claude-$(date +'%Y-%m-%d_%H%M%S').jsonl" \
+  | format-claude-stream
 ```
 
 ### Library
@@ -77,3 +99,4 @@ for this). The package is built and released automatically when the "Version
 Packages" PR is merged.
 
 [changesets]: https://www.npmjs.com/package/@changesets/cli
+[tee]: https://man7.org/linux/man-pages/man1/tee.1.html
