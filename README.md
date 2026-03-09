@@ -75,6 +75,7 @@ Everyday commands:
 ```bash
 pnpm install  # install dependencies (one-time setup)
 pnpm test     # run unit tests
+pnpm tsc -w   # watch for type errors
 pnpm verify   # run all checks
 pnpm fix      # fix formatting
 ```
