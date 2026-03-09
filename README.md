@@ -51,7 +51,7 @@ claude --print --verbose --output-format stream-json \
 ### Library
 
 ```ts
-import {ClaudeStreamFormatter, StandardOutput, ChalkColorizer} from "format-claude-stream";
+import {ClaudeStreamFormatter, StandardOutput, ChalkColorizer} from "@khanacademy/format-claude-stream";
 
 const claudeStreamFormatter = new ClaudeStreamFormatter(
     new StandardOutput(),
