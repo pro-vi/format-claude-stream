@@ -1,5 +1,11 @@
 # @khanacademy/format-claude-stream
 
+## 0.1.2
+
+### Patch Changes
+
+- f6d2cec: This release fixes some mistakes in the README.
+
 ## 0.1.1
 
 ### Patch Changes
