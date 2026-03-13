@@ -4,12 +4,12 @@ import {ClaudeStreamFormatter} from "../claude-stream-formatter.ts";
 import {StandardOutput} from "../adapters/standard-output.ts";
 import {ChalkColorizer} from "../adapters/chalk-colorizer.ts";
 
-const pf = new ClaudeStreamFormatter(
+const claudeStreamFormatter = new ClaudeStreamFormatter(
     new StandardOutput(),
     new ChalkColorizer(),
 );
 
-const rl = readline.createInterface({
+const inputLines = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     terminal: false,
@@ -17,10 +17,10 @@ const rl = readline.createInterface({
 
 let promiseChain = Promise.resolve();
 
-rl.on("line", (line) => {
+inputLines.on("line", (line) => {
     promiseChain = promiseChain.then(async () => {
         try {
-            await pf.write(JSON.parse(line));
+            await claudeStreamFormatter.write(JSON.parse(line));
         } catch (e) {
             console.error(e);
             console.error("The bad line of input was:");
@@ -30,4 +30,4 @@ rl.on("line", (line) => {
     });
 });
 
-rl.once("close", () => {});
+inputLines.once("close", () => {});
