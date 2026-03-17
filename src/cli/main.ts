@@ -12,16 +12,16 @@ if (options.help) {
     process.exit(1);
 }
 
-const claudeStreamFormatter = new ClaudeStreamFormatter(
-    new StandardOutput(),
-    new ChalkColorizer(),
-);
-
 const inputLines = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     terminal: false,
 });
+
+const claudeStreamFormatter = new ClaudeStreamFormatter(
+    new StandardOutput(),
+    new ChalkColorizer(),
+);
 
 let promiseChain = Promise.resolve();
 
