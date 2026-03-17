@@ -23,19 +23,13 @@ const claudeStreamFormatter = new ClaudeStreamFormatter(
     new ChalkColorizer(),
 );
 
-let promiseChain = Promise.resolve();
-
-inputLines.on("line", (line) => {
-    promiseChain = promiseChain.then(async () => {
-        try {
-            await claudeStreamFormatter.write(JSON.parse(line));
-        } catch (e) {
-            console.error(e);
-            console.error("The bad line of input was:");
-            console.error(line);
-            process.exit(1);
-        }
-    });
-});
-
-inputLines.once("close", () => {});
+for await (const line of inputLines) {
+    try {
+        await claudeStreamFormatter.write(JSON.parse(line));
+    } catch (e) {
+        console.error(e);
+        console.error("The bad line of input was:");
+        console.error(line);
+        process.exit(1);
+    }
+}
