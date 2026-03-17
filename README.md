@@ -73,11 +73,12 @@ pnpm >= 10.26.0
 Everyday commands:
 
 ```bash
-pnpm install  # install dependencies (one-time setup)
-pnpm test     # run unit tests
-pnpm tsc -w   # watch for type errors
-pnpm verify   # run all checks
-pnpm fix      # fix formatting
+pnpm install     # install dependencies (one-time setup)
+pnpm test        # run unit tests once
+pnpm test:watch  # run unit tests in watch mode
+pnpm tsc -w      # watch for type errors
+pnpm verify      # run all checks
+pnpm fix         # fix formatting
 ```
 
 ## Releasing

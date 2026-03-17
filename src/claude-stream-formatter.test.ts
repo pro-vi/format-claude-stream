@@ -1,4 +1,4 @@
-import {describe, it, expect} from "@jest/globals";
+import {describe, it, expect} from "vitest";
 import {OutputFake} from "./core/ports/output-fake.ts";
 import {ClaudeStreamFormatter} from "./claude-stream-formatter.ts";
 import {NullColorizer} from "./core/ports/null-colorizer.ts";

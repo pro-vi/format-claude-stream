@@ -1,4 +1,4 @@
-import {describe, it, expect} from "@jest/globals";
+import {describe, it, expect} from "vitest";
 import {StreamJsonLine} from "./stream-json-line.ts";
 
 describe("the StreamJsonLine schema", () => {

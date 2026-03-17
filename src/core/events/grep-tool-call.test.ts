@@ -1,4 +1,4 @@
-import {describe, expect, it} from "@jest/globals";
+import {describe, expect, it} from "vitest";
 import {GrepToolCall} from "./grep-tool-call.ts";
 import {NullColorizer} from "../ports/null-colorizer.ts";
 

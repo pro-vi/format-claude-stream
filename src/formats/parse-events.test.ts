@@ -1,4 +1,4 @@
-import {describe, expect, it} from "@jest/globals";
+import {describe, expect, it} from "vitest";
 import {readdirSync} from "fs";
 import {join} from "path";
 import {parseEvents} from "./parse-events.ts";

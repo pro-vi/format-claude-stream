@@ -1,4 +1,4 @@
-import {describe, expect, it} from "@jest/globals";
+import {describe, expect, it} from "vitest";
 import {OutputFake} from "./ports/output-fake.ts";
 import {BashToolCall} from "./events/bash-tool-call.ts";
 import {EditToolCall} from "./events/edit-tool-call.ts";

@@ -20,8 +20,9 @@
   "type": "module",
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.build.json",
-    "verify": "prettier --check src && tsc && jest",
-    "test": "jest",
+    "verify": "prettier --check src && tsc && vitest run",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "fix": "prettier --write src",
     "prepare": "husky",
     "publish:ci": "git diff --stat --exit-code HEAD && pnpm build && changeset publish"
@@ -37,14 +38,12 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
-    "@jest/globals": "^30.2.0",
-    "@swc/jest": "^0.2.39",
     "@swc-node/register": "^1.11.1",
     "@types/node": "^25.3.0",
     "husky": "^9.1.7",
-    "jest": "^30.2.0",
     "prettier": "^3.8.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   },
   "dependencies": {
     "chalk": "^5.6.2",
