@@ -35,6 +35,16 @@ export const GrepToolCall = z.looseObject({
     }),
 });
 
+export const TaskToolCall = z.looseObject({
+    name: z.literal("Task"),
+    id: z.string(),
+    input: z.looseObject({
+        subagent_type: z.string(),
+        description: z.string(),
+        prompt: z.string(),
+    }),
+});
+
 export const UnrecognizedToolCall = z.looseObject({
     name: z.string(),
     id: z.string(),
@@ -46,4 +56,5 @@ export const ToolCall = z.discriminatedUnion("name", [
     EditToolCall,
     GrepToolCall,
     ReadToolCall,
+    TaskToolCall,
 ]);

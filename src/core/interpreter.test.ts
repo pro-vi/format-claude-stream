@@ -13,6 +13,7 @@ import {MarkupColorizer} from "./ports/markup-colorizer.ts";
 import {Interpreter} from "./interpreter.ts";
 import {ToolUseSuccess} from "./events/tool-use-success.ts";
 import {ClaudeIOEvent} from "./events/claude-io-event.type.js";
+import {TaskToolCall} from "./events/task-tool-call.ts";
 
 describe("Interpreter", () => {
     it("outputs a generic tool call event", async () => {
@@ -306,6 +307,42 @@ describe("Interpreter", () => {
 
         expect(outputFake.value()).toBe(
             "$ echo hello\nYou don't have permission.\n",
+        );
+    });
+
+    it("formats a task tool call", async () => {
+        const outputFake = new OutputFake();
+        const interpreter = new Interpreter(outputFake, new NullColorizer());
+
+        await interpreter.process(
+            new TaskToolCall({
+                toolUseId: "1",
+                subagentType: "Explore",
+                description: "look around",
+                prompt: "a prompt",
+            }),
+        );
+
+        expect(outputFake.value()).toBe(
+            "Task (Explore): look around\na prompt\n",
+        );
+    });
+
+    it("colorizes a task tool call", async () => {
+        const outputFake = new OutputFake();
+        const interpreter = new Interpreter(outputFake, new MarkupColorizer());
+
+        await interpreter.process(
+            new TaskToolCall({
+                toolUseId: "1",
+                subagentType: "Explore",
+                description: "look around",
+                prompt: "a prompt",
+            }),
+        );
+
+        expect(outputFake.value()).toBe(
+            "[[importantAction Task (Explore): look around]]\na prompt\n",
         );
     });
 });

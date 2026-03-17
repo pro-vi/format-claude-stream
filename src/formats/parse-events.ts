@@ -18,6 +18,7 @@ import {UnreachableCodeError} from "../lib/unreachable-code-error.ts";
 import {UnrecognizedJsonEvent} from "../core/events/unrecognized-json-event.ts";
 import {ToolUseSuccess} from "../core/events/tool-use-success.ts";
 import {ToolUseError} from "../core/events/tool-use-error.ts";
+import {TaskToolCall} from "../core/events/task-tool-call.ts";
 
 export function parseEvents(data: unknown): ClaudeIOEvent[] {
     const parsed = StreamJsonLine.safeParse(data);
@@ -101,6 +102,13 @@ function parseToolCallEvent(
                 toolCall.input.pattern,
                 toolCall.input.path,
             );
+        case "Task":
+            return new TaskToolCall({
+                toolUseId: toolCall.id,
+                subagentType: toolCall.input.subagent_type,
+                description: toolCall.input.description,
+                prompt: toolCall.input.prompt,
+            });
         default:
             throw new UnreachableCodeError(toolCall);
     }
