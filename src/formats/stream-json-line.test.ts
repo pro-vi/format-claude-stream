@@ -45,6 +45,32 @@ describe("the StreamJsonLine schema", () => {
         );
     });
 
+    it("accepts a subagent result (tool_result with array content)", () => {
+        const subagentResult = {
+            type: "user",
+            message: {
+                role: "user",
+                content: [
+                    {
+                        type: "tool_result",
+                        content: [{type: "text", text: "Found 12 functions."}],
+                        tool_use_id: "toolu_013EEnCeXGKguWCT1qFDvtds",
+                    },
+                ],
+            },
+            tool_use_result: {
+                agentType: "Explore",
+                totalDurationMs: 36249,
+                totalTokens: 50958,
+            },
+        };
+
+        // Array content is now accepted by the UserLine schema.
+        expect(StreamJsonLine.safeParse(subagentResult)).toEqual(
+            expect.objectContaining({success: true}),
+        );
+    });
+
     it("accepts a tool result message", () => {
         const toolResult = {
             type: "user",

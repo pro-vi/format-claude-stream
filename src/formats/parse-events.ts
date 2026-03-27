@@ -4,7 +4,9 @@ import {
     AssistantLine,
     StreamJsonLine,
     SubagentLine,
+    SubagentResultLine,
     isSubagentLine,
+    isSubagentResultLine,
     type UserLine,
 } from "./stream-json-line.ts";
 import {Thinking} from "../core/events/thinking.ts";
@@ -22,6 +24,7 @@ import {ToolUseSuccess} from "../core/events/tool-use-success.ts";
 import {ToolUseError} from "../core/events/tool-use-error.ts";
 import {TaskToolCall} from "../core/events/task-tool-call.ts";
 import {SubagentMessage} from "../core/events/subagent-message.ts";
+import {SubagentResult} from "../core/events/subagent-result.ts";
 
 export function parseEvents(data: unknown): ClaudeIOEvent[] {
     // Subagent input messages share "type":"user" with tool-result messages
@@ -29,7 +32,14 @@ export function parseEvents(data: unknown): ClaudeIOEvent[] {
     // Detect them before the discriminated union parse, which would reject
     // the non-tool_result content shape.
     if (isSubagentLine(data)) {
-        return parseSubagentEvents(data);
+        return parseSubagentInputEvents(data);
+    }
+
+    // Subagent result messages are tool_result user messages whose
+    // tool_use_result carries agent metadata.  Detect before the normal
+    // tool-result path so we can surface the metadata.
+    if (isSubagentResultLine(data)) {
+        return parseSubagentResultEvents(data);
     }
 
     const parsed = StreamJsonLine.safeParse(data);
@@ -125,22 +135,34 @@ function parseToolCallEvent(
     }
 }
 
+/**
+ * Normalize tool-result content that may be a plain string or an array
+ * of text objects (the latter appears in subagent results).
+ */
+function normalizeToolResultContent(
+    content: string | Array<{type: "text"; text: string}>,
+): string {
+    if (typeof content === "string") return content;
+    return content.map((c) => c.text).join("\n");
+}
+
 function parseToolResultEvents(
     data: z.infer<typeof UserLine>,
 ): ClaudeIOEvent[] {
     return data.message.content.map(
         ({content, is_error: isError, tool_use_id: toolUseId}) => {
+            const text = normalizeToolResultContent(content);
             if (isError) {
                 return new ToolUseError(
-                    content.replace(/<\/?tool_use_error>/g, ""),
+                    text.replace(/<\/?tool_use_error>/g, ""),
                 );
             }
-            return new ToolUseSuccess({toolOutput: content, toolUseId});
+            return new ToolUseSuccess({toolOutput: text, toolUseId});
         },
     );
 }
 
-function parseSubagentEvents(
+function parseSubagentInputEvents(
     data: z.infer<typeof SubagentLine>,
 ): ClaudeIOEvent[] {
     const prompt = data.message.content
@@ -148,4 +170,19 @@ function parseSubagentEvents(
         .map((c) => c.text)
         .join("\n");
     return [new SubagentMessage({prompt, sessionId: data.session_id})];
+}
+
+function parseSubagentResultEvents(
+    data: z.infer<typeof SubagentResultLine>,
+): ClaudeIOEvent[] {
+    return data.message.content.map(({content, tool_use_id: toolUseId}) => {
+        const output = normalizeToolResultContent(content);
+        return new SubagentResult({
+            toolUseId,
+            output,
+            agentType: data.tool_use_result.agentType,
+            durationMs: data.tool_use_result.totalDurationMs,
+            totalTokens: data.tool_use_result.totalTokens,
+        });
+    });
 }

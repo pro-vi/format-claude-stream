@@ -67,14 +67,39 @@ export const SubagentLine = z.looseObject({
 });
 
 /**
- * Runtime guard to detect subagent lines before the discriminated union
- * parse, since they share "type":"user" but have an incompatible content
- * shape compared to tool-result user messages.
+ * Subagent result lines are tool_result user messages whose
+ * `tool_use_result` carries agent metadata (agentType, duration, tokens).
+ */
+export const SubagentResultLine = z.looseObject({
+    type: z.literal("user"),
+    message: UserMessage,
+    tool_use_result: z.looseObject({
+        agentType: z.string(),
+        totalDurationMs: z.optional(z.number()),
+        totalTokens: z.optional(z.number()),
+    }),
+});
+
+/**
+ * Runtime guard to detect subagent input lines before the discriminated
+ * union parse, since they share "type":"user" but have an incompatible
+ * content shape compared to tool-result user messages.
  */
 export function isSubagentLine(
     data: unknown,
 ): data is z.infer<typeof SubagentLine> {
     return SubagentLine.safeParse(data).success;
+}
+
+/**
+ * Runtime guard to detect subagent result lines.  These pass the normal
+ * UserLine schema but carry agent metadata in tool_use_result that we
+ * want to surface.
+ */
+export function isSubagentResultLine(
+    data: unknown,
+): data is z.infer<typeof SubagentResultLine> {
+    return SubagentResultLine.safeParse(data).success;
 }
 
 export const StreamJsonLine = z.discriminatedUnion("type", [
