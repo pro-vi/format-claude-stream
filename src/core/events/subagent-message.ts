@@ -16,13 +16,9 @@ export class SubagentMessage implements ClaudeIOEvent {
     }
 
     format(colorizer: Colorizer): string {
-        const preview =
-            this.prompt.length > 120
-                ? this.prompt.slice(0, 120) + "…"
-                : this.prompt;
         const label = this.sessionId
             ? `Subagent [${this.sessionId.slice(0, 8)}]`
             : "Subagent";
-        return colorizer.action(`${label}: ${preview}`);
+        return [colorizer.action(`${label}:`), this.prompt].join("\n");
     }
 }
