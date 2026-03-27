@@ -45,6 +45,38 @@ const RateLimitEventLine = z.looseObject({
     type: z.literal("rate_limit_event"),
 });
 
+/**
+ * Subagent input messages share "type":"user" but carry text content (the
+ * subagent prompt) instead of tool_result content.  They also always have
+ * a `parent_tool_use_id` field linking them to the Agent/Task tool call
+ * that spawned the subagent.
+ */
+export const SubagentLine = z.looseObject({
+    type: z.literal("user"),
+    message: z.looseObject({
+        role: z.literal("user"),
+        content: z.array(
+            z.looseObject({
+                type: z.literal("text"),
+                text: z.string(),
+            }),
+        ),
+    }),
+    parent_tool_use_id: z.string(),
+    session_id: z.optional(z.string()),
+});
+
+/**
+ * Runtime guard to detect subagent lines before the discriminated union
+ * parse, since they share "type":"user" but have an incompatible content
+ * shape compared to tool-result user messages.
+ */
+export function isSubagentLine(
+    data: unknown,
+): data is z.infer<typeof SubagentLine> {
+    return SubagentLine.safeParse(data).success;
+}
+
 export const StreamJsonLine = z.discriminatedUnion("type", [
     AssistantLine,
     UserLine,

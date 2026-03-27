@@ -3,6 +3,8 @@ import {ClaudeIOEvent} from "../core/events/claude-io-event.type.ts";
 import {
     AssistantLine,
     StreamJsonLine,
+    SubagentLine,
+    isSubagentLine,
     type UserLine,
 } from "./stream-json-line.ts";
 import {Thinking} from "../core/events/thinking.ts";
@@ -19,8 +21,17 @@ import {UnrecognizedJsonEvent} from "../core/events/unrecognized-json-event.ts";
 import {ToolUseSuccess} from "../core/events/tool-use-success.ts";
 import {ToolUseError} from "../core/events/tool-use-error.ts";
 import {TaskToolCall} from "../core/events/task-tool-call.ts";
+import {SubagentMessage} from "../core/events/subagent-message.ts";
 
 export function parseEvents(data: unknown): ClaudeIOEvent[] {
+    // Subagent input messages share "type":"user" with tool-result messages
+    // but carry text content (the prompt) instead of tool_result content.
+    // Detect them before the discriminated union parse, which would reject
+    // the non-tool_result content shape.
+    if (isSubagentLine(data)) {
+        return parseSubagentEvents(data);
+    }
+
     const parsed = StreamJsonLine.safeParse(data);
 
     if (!parsed.success) {
@@ -127,4 +138,14 @@ function parseToolResultEvents(
             return new ToolUseSuccess({toolOutput: content, toolUseId});
         },
     );
+}
+
+function parseSubagentEvents(
+    data: z.infer<typeof SubagentLine>,
+): ClaudeIOEvent[] {
+    const prompt = data.message.content
+        .filter((c): c is {type: "text"; text: string} => c.type === "text")
+        .map((c) => c.text)
+        .join("\n");
+    return [new SubagentMessage({prompt, sessionId: data.session_id})];
 }
