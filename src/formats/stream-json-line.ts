@@ -62,7 +62,6 @@ export const SubagentLine = z.looseObject({
             }),
         ),
     }),
-    parent_tool_use_id: z.string(),
     session_id: z.optional(z.string()),
 });
 
