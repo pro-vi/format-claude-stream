@@ -9,6 +9,7 @@ import {
     isSubagentResultLine,
     type UserLine,
 } from "./stream-json-line.ts";
+import {type ToolResultContent} from "./user-message.ts";
 import {Thinking} from "../core/events/thinking.ts";
 import {TextOutput} from "../core/events/text-output.ts";
 import {ToolUseMessageContent} from "./assistant-message.ts";
@@ -27,17 +28,16 @@ import {SubagentMessage} from "../core/events/subagent-message.ts";
 import {SubagentResult} from "../core/events/subagent-result.ts";
 
 export function parseEvents(data: unknown): ClaudeIOEvent[] {
-    // Subagent input messages share "type":"user" with tool-result messages
-    // but carry text content (the prompt) instead of tool_result content.
-    // Detect them before the discriminated union parse, which would reject
-    // the non-tool_result content shape.
+    // Guard ordering matters: isSubagentLine checks for text content
+    // (type:"text"), while isSubagentResultLine checks for tool_result
+    // content (type:"tool_result"). They cannot both match the same
+    // message because their content schemas are mutually exclusive.
+    // Both must run before StreamJsonLine.safeParse, which would reject
+    // the subagent input shape (text content in a "user" message).
     if (isSubagentLine(data)) {
         return parseSubagentInputEvents(data);
     }
 
-    // Subagent result messages are tool_result user messages whose
-    // tool_use_result carries agent metadata.  Detect before the normal
-    // tool-result path so we can surface the metadata.
     if (isSubagentResultLine(data)) {
         return parseSubagentResultEvents(data);
     }
@@ -140,7 +140,7 @@ function parseToolCallEvent(
  * of text objects (the latter appears in subagent results).
  */
 function normalizeToolResultContent(
-    content: string | Array<{type: "text"; text: string}>,
+    content: z.infer<typeof ToolResultContent>,
 ): string {
     if (typeof content === "string") return content;
     return content.map((c) => c.text).join("\n");
@@ -165,10 +165,7 @@ function parseToolResultEvents(
 function parseSubagentInputEvents(
     data: z.infer<typeof SubagentLine>,
 ): ClaudeIOEvent[] {
-    const prompt = data.message.content
-        .filter((c): c is {type: "text"; text: string} => c.type === "text")
-        .map((c) => c.text)
-        .join("\n");
+    const prompt = data.message.content.map((c) => c.text).join("\n");
     return [new SubagentMessage({prompt, sessionId: data.session_id})];
 }
 

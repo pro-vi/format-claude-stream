@@ -1,6 +1,8 @@
 import {Colorizer} from "../ports/colorizer.ts";
 import {ClaudeIOEvent} from "./claude-io-event.type.ts";
 
+const RESULT_PREVIEW_MAX_LENGTH = 200;
+
 interface ConstructorParams {
     toolUseId: string;
     output: string;
@@ -43,8 +45,8 @@ export class SubagentResult implements ClaudeIOEvent {
         const meta = parts.length > 0 ? ` (${parts.join(", ")})` : "";
 
         const preview =
-            this.output.length > 200
-                ? this.output.slice(0, 200) + "…"
+            this.output.length > RESULT_PREVIEW_MAX_LENGTH
+                ? this.output.slice(0, RESULT_PREVIEW_MAX_LENGTH) + "…"
                 : this.output;
         return [colorizer.action(`Subagent result${meta}:`), preview].join(
             "\n",

@@ -1,6 +1,6 @@
 import * as z from "zod";
 import {AssistantMessage} from "./assistant-message.ts";
-import {UserMessage} from "./user-message.ts";
+import {TextContentArray, UserMessage} from "./user-message.ts";
 
 /**
  * Represents output from Claude, including tool calls, thinking, and
@@ -55,12 +55,7 @@ export const SubagentLine = z.looseObject({
     type: z.literal("user"),
     message: z.looseObject({
         role: z.literal("user"),
-        content: z.array(
-            z.looseObject({
-                type: z.literal("text"),
-                text: z.string(),
-            }),
-        ),
+        content: TextContentArray,
     }),
     session_id: z.optional(z.string()),
 });
