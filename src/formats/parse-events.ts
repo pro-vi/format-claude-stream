@@ -137,13 +137,19 @@ function parseToolCallEvent(
 
 /**
  * Normalize tool-result content that may be a plain string or an array
- * of text objects (the latter appears in subagent results).
+ * of content objects (text, tool_reference, images, etc.).
  */
 function normalizeToolResultContent(
     content: z.infer<typeof ToolResultContent>,
 ): string {
     if (typeof content === "string") return content;
-    return content.map((c) => c.text).join("\n");
+    return content
+        .map((c) => {
+            if ("text" in c && typeof c.text === "string") return c.text;
+            if ("tool_name" in c) return `[${c.type}: ${c.tool_name}]`;
+            return `[${c.type}]`;
+        })
+        .join("\n");
 }
 
 function parseToolResultEvents(
